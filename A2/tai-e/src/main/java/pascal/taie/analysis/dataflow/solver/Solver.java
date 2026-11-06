@@ -26,6 +26,8 @@ import pascal.taie.analysis.dataflow.analysis.DataflowAnalysis;
 import pascal.taie.analysis.dataflow.fact.DataflowResult;
 import pascal.taie.analysis.graph.cfg.CFG;
 
+import java.util.Set;
+
 /**
  * Base class for data-flow analysis solver, which provides common
  * functionalities for different solver implementations.
@@ -77,7 +79,12 @@ public abstract class Solver<Node, Fact> {
     }
 
     protected void initializeForward(CFG<Node> cfg, DataflowResult<Node, Fact> result) {
-        // TODO - finish me
+        for (Node n : cfg.getNodes()) {
+            result.setInFact(n, analysis.newInitialFact());
+            result.setOutFact(n, analysis.newInitialFact());
+        }
+        // 覆盖 entry 的 OUT
+        result.setOutFact(cfg.getEntry(), analysis.newBoundaryFact(cfg));
     }
 
     protected void initializeBackward(CFG<Node> cfg, DataflowResult<Node, Fact> result) {
